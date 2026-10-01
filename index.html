@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
-    <title>Save you personal dout 🤯</title>
+    <title>Knowledge Hub</title>
     
     <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -212,9 +212,9 @@
 <div class="chat-app" id="chat-app">
     <!-- Header -->
     <div class="chat-header">
-        <h2><span class="status-dot"></span>Live Chat</h2>
+        <h2><span class="status-dot"></span>Save Your Personal Doubt 🤯</h2>
         <!-- Delete Button Added Here -->
-        <button class="delete-all-btn" onclick="deleteAllMessages()" title="सभी मैसेज डिलीट करें">
+        <button class="delete-all-btn" onclick="deleteAllMessages()" title="Delete all doubt">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -230,13 +230,13 @@
     <!-- Bottom Input Bar -->
     <div class="input-container">
         <!-- Image Button -->
-        <button class="attachment-btn" onclick="document.getElementById('image-input').click()" title="फोटो भेजें">
+        <button class="attachment-btn" onclick="document.getElementById('image-input').click()" title="Send photo">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         </button>
         <input type="file" id="image-input" accept="image/*" onchange="handleImageUpload(event)">
 
         <!-- Text Input Box -->
-        <input type="text" id="chat-input" class="chat-input" placeholder="मैसेज टाइप करें..." autocomplete="off">
+        <input type="text" id="chat-input" class="chat-input" placeholder="Type your doubt..." autocomplete="off">
 
         <!-- Send Button -->
         <button class="send-btn" onclick="sendMessage()">
