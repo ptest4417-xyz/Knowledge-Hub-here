@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Live Chat</title>
     
-    <!-- Firebase Libraries (Compat Version for Easy Integration) -->
+    <!-- Firebase Libraries -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
@@ -18,27 +18,28 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body, html {
+        /* 100% Full Screen Fix for Mobile & Desktop */
+        html, body {
             height: 100%;
             width: 100%;
-            background-color: #ffffff;
             overflow: hidden;
+            background-color: #eef2f5;
         }
 
-        /* App Layout */
         .chat-app {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100%;
+            width: 100%;
             max-width: 600px;
             margin: 0 auto;
-            background: #f8f9fa;
+            background: #ffffff;
             position: relative;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
         }
 
-        /* Header */
+        /* Header - Fixed Top */
         .chat-header {
+            flex-shrink: 0; /* कटने से रोकेगा */
             background: #ffffff;
             padding: 12px 16px;
             border-bottom: 1px solid #e9ecef;
@@ -52,43 +53,40 @@
             font-size: 1.1rem;
             color: #212529;
             font-weight: 600;
+            display: flex;
+            align-items: center;
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 9px;
+            height: 9px;
             background-color: #2ec4b6;
             border-radius: 50%;
             display: inline-block;
-            margin-right: 6px;
+            margin-right: 8px;
         }
 
-        /* Messages Area */
+        /* Messages Container - Middle Scrollable */
         .messages-container {
             flex: 1;
+            min-height: 0; /* Flexbox Overflow Fix */
             overflow-y: auto;
             padding: 12px 12px 20px 12px;
             display: flex;
             flex-direction: column;
-            gap: 4px; /* Minimal WhatsApp-like gap */
-            background-color: #f7f8fa;
+            gap: 6px;
+            background-color: #f8f9fa;
         }
 
         /* Message Bubbles */
         .message-bubble {
-            max-width: 78%;
+            max-width: 80%;
             padding: 8px 12px;
             border-radius: 12px;
             font-size: 0.95rem;
             line-height: 1.4;
             word-wrap: break-word;
             position: relative;
-            animation: fadeIn 0.15s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Sent Message (Right) */
@@ -106,18 +104,16 @@
             color: #1c1e21;
             border-bottom-left-radius: 2px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.06);
-            border: 1px solid #edf2f7;
+            border: 1px solid #e2e8f0;
         }
 
-        /* Time Stamp */
         .message-time {
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             margin-top: 3px;
             text-align: right;
             opacity: 0.75;
         }
 
-        /* Image Message Styling */
         .message-image {
             max-width: 100%;
             border-radius: 8px;
@@ -126,10 +122,11 @@
             cursor: pointer;
         }
 
-        /* Input Container (WhatsApp Style Bottom Bar) */
+        /* Input Container - Fixed Bottom Always Visible */
         .input-container {
+            flex-shrink: 0; /* हमेशा नीचे फिक्स रहेगा */
             background: #ffffff;
-            padding: 8px 10px;
+            padding: 10px 12px;
             border-top: 1px solid #e9ecef;
             display: flex;
             align-items: center;
@@ -146,23 +143,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
-        }
-
-        .attachment-btn:active {
-            background: #edf2f7;
+            flex-shrink: 0;
         }
 
         .chat-input {
             flex: 1;
-            border: 1px solid #e2e8f0;
-            background: #f8f9fa;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
             border-radius: 20px;
             padding: 10px 16px;
             font-size: 0.95rem;
             outline: none;
-            color: #2d3748;
-            transition: border-color 0.2s, background 0.2s;
+            color: #1e293b;
         }
 
         .chat-input:focus {
@@ -174,22 +166,16 @@
             background: #0084ff;
             border: none;
             color: white;
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.1s;
             flex-shrink: 0;
         }
 
-        .send-btn:active {
-            transform: scale(0.92);
-        }
-
-        /* Hidden File Input */
         #image-input {
             display: none;
         }
@@ -203,18 +189,24 @@
         <h2><span class="status-dot"></span>Live Chat</h2>
     </div>
 
-    <!-- Message Area -->
-    <div class="messages-container" id="messages-container"></div>
+    <!-- Messages Container -->
+    <div class="messages-container" id="messages-container">
+        <!-- Default Welcome Message -->
+        <div class="message-bubble received">
+            <div>नमस्ते! लाइव चैट में आपका स्वागत है। यहाँ मैसेज टाइप करें 👇</div>
+            <div class="message-time">Just now</div>
+        </div>
+    </div>
 
-    <!-- Bottom Input Box -->
+    <!-- Bottom Typing Bar (Permanently Visible) -->
     <div class="input-container">
-        <!-- Image Attachment Icon -->
-        <button class="attachment-btn" onclick="document.getElementById('image-input').click()" title="इमेज भेजें">
+        <!-- Image Button -->
+        <button class="attachment-btn" onclick="document.getElementById('image-input').click()" title="फोटो भेजें">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         </button>
         <input type="file" id="image-input" accept="image/*" onchange="handleImageUpload(event)">
 
-        <!-- Text Input Field (Supports Emojis & GIFs directly from keyboard) -->
+        <!-- Text Input Box -->
         <input type="text" id="chat-input" class="chat-input" placeholder="मैसेज टाइप करें..." autocomplete="off">
 
         <!-- Send Button -->
@@ -226,7 +218,7 @@
 
 <script>
     // ------------------------------------------------------------------
-    // 1. Firebase Credentials Placeholder (यहाँ अपने Firebase डिटेल्स डालें)
+    // 1. Firebase Credentials Placeholder
     // ------------------------------------------------------------------
     const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
@@ -238,7 +230,6 @@
         appId: "YOUR_APP_ID"
     };
 
-    // Firebase Initialize (जब आप क्रेडेंशियल डालेंगे तब यह ऑटो-कनेक्ट हो जाएगा)
     let db = null;
     try {
         if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
@@ -247,11 +238,11 @@
             listenForMessages();
         }
     } catch (e) {
-        console.warn("Firebase क्रेडेंशियल सेट नहीं किए गए हैं।");
+        console.warn("Firebase credentials not configured yet.");
     }
 
     // ------------------------------------------------------------------
-    // 2. Anonymous User Identity
+    // 2. User Identity
     // ------------------------------------------------------------------
     let myUserId = localStorage.getItem('chat_user_id');
     if (!myUserId) {
@@ -277,17 +268,15 @@
         };
 
         if (db) {
-            // Real Firebase Database
             db.ref('chat_messages').push(messageData);
         } else {
-            // Local Preview (Firebase लिंक डालने से पहले टेस्ट करने के लिए)
+            // Test Mode (When Firebase is not connected)
             renderSingleMessage(messageData);
         }
 
         chatInput.value = '';
     }
 
-    // Enter Key Handler
     chatInput.addEventListener('keypress', function (e) {
         if (e.key === 'Enter') {
             sendMessage();
@@ -295,7 +284,7 @@
     });
 
     // ------------------------------------------------------------------
-    // 4. Realtime Message Listener from Firebase
+    // 4. Realtime Message Listener
     // ------------------------------------------------------------------
     function listenForMessages() {
         if (!db) return;
@@ -306,7 +295,7 @@
     }
 
     // ------------------------------------------------------------------
-    // 5. Render Message Bubble on Screen
+    // 5. Render Message Bubble
     // ------------------------------------------------------------------
     function renderSingleMessage(data) {
         const isMe = data.senderId === myUserId;
@@ -315,17 +304,14 @@
 
         let contentHtml = '';
 
-        // Display Image if present
         if (data.image) {
-            contentHtml += `<img src="${data.image}" class="message-image" alt="Uploaded Image" onclick="window.open('${data.image}', '_blank')">`;
+            contentHtml += `<img src="${data.image}" class="message-image" alt="Image" onclick="window.open('${data.image}', '_blank')">`;
         }
 
-        // Display Text
         if (data.text) {
             contentHtml += `<div>${escapeHTML(data.text)}</div>`;
         }
 
-        // Time format
         const timeStr = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         contentHtml += `<div class="message-time">${timeStr}</div>`;
 
@@ -337,7 +323,7 @@
     }
 
     // ------------------------------------------------------------------
-    // 6. Image Compression & Handling (< 1MB Guarantee)
+    // 6. Image Compression (< 1MB)
     // ------------------------------------------------------------------
     function handleImageUpload(event) {
         const file = event.target.files[0];
@@ -345,7 +331,7 @@
 
         compressImage(file, function (compressedBase64) {
             sendMessage(compressedBase64);
-            event.target.value = ''; // Reset input
+            event.target.value = '';
         });
     }
 
@@ -359,7 +345,7 @@
                 const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
-                const maxResolution = 1200; // High quality resolution limit
+                const maxResolution = 1200;
 
                 if (width > height) {
                     if (width > maxResolution) {
@@ -378,11 +364,9 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Initial compression quality 0.8 (Sharp & Crystal Clear)
                 let quality = 0.8;
                 let dataUrl = canvas.toDataURL('image/jpeg', quality);
 
-                // Ensure base64 string is strictly below 1 MB (~1,000,000 chars)
                 while (dataUrl.length > 950000 && quality > 0.2) {
                     quality -= 0.1;
                     dataUrl = canvas.toDataURL('image/jpeg', quality);
@@ -393,7 +377,6 @@
         };
     }
 
-    // Security Helper
     function escapeHTML(str) {
         return str.replace(/[&<>'"]/g, 
             tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
