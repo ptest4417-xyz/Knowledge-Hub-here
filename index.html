@@ -322,7 +322,7 @@
     // Delete All Messages Function
     // ------------------------------------------------------------------
     function deleteAllMessages() {
-        const confirmDelete = confirm("क्या आप सच में सभी मैसेज डिलीट करना चाहते हैं? (यह सभी के लिए हमेशा के लिए डिलीट हो जाएगा)");
+        const confirmDelete = confirm("Really delete your all saved doubt 🤷");
         if (confirmDelete) {
             // Remove the 'chat_messages' node completely from Firebase Realtime Database
             db.ref('chat_messages').remove().catch(error => {
