@@ -404,7 +404,7 @@
     // ------------------------------------------------------------------
     function checkEntryCode() {
         const code = document.getElementById('entry-code').value.trim();
-        if (code === "cmxyz") {
+        if (code === "yes") {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('chat-app').style.display = 'flex';
             scrollToBottom();
@@ -476,7 +476,7 @@
 
     function executeDelete() {
         const code = document.getElementById('delete-code-input').value.trim();
-        if (code === "cmxyz") {
+        if (code === "cm10") {
             db.ref('chat_messages').remove().then(() => {
                 closeDeleteModal();
             }).catch(error => {
